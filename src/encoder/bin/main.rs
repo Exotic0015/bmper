@@ -1,6 +1,6 @@
 use std::{env::args, fs::File, io::Read, path::Path, time::Instant};
 
-use bmp::{px, Image, Pixel};
+use image::Rgb;
 use rand::{distributions::Alphanumeric, Rng};
 
 fn main() {
@@ -13,7 +13,6 @@ fn main() {
     let buffer_length: usize;
     let size: u32;
     let height: usize;
-    let mut image: Image;
     let rname: String;
 
     let mut array: Vec<Vec<u8>>;
@@ -60,7 +59,7 @@ fn main() {
     }
 
     // Assign the image variable.
-    image = Image::new(size, size);
+    let mut image = image::RgbImage::new(size, size);
 
     // Calculate the pixel array.
     array = vec![vec![0; 3]; height];
@@ -78,7 +77,7 @@ fn main() {
 
     // Draw pixels on the image.
     for pixel in array {
-        image.set_pixel(image_x, image_y, px!(pixel[0], pixel[1], pixel[2]));
+        image.put_pixel(image_x, image_y, Rgb([pixel[0], pixel[1], pixel[2]]));
 
         if image_x == size - 1 {
             image_x = 0;
@@ -99,18 +98,14 @@ fn main() {
         .to_lowercase();
 
     // Save the image.
-    let bmp_filename = format! {"{}.bmp", rname};
-    let _ = image.save(&bmp_filename);
+    let png_filename = format! {"{}.png", rname};
 
-    let _ = image::open(&bmp_filename)
-        .unwrap()
-        .save(format!("{}.png", rname.to_lowercase()))
-        .unwrap();
+    image.save(png_filename).unwrap();
 
     // Print stats.
     println!(
-        "Size: {}x{}\nCharacter count: {}\nSaved as {}.bmp and {}.png",
-        size, size, buffer_length, rname, rname
+        "Size: {}x{}\nCharacter count: {}\nSaved as {}.png",
+        size, size, buffer_length, rname
     );
 
     // Print execution time.

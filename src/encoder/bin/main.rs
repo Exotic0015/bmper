@@ -98,7 +98,7 @@ fn main() {
         .to_lowercase();
 
     // Save the image.
-    let png_filename = format! {"{}.png", rname};
+    let png_filename = format! {"{}.{}.png", rname, raw_file_path.extension().unwrap().to_str().unwrap()};
 
     image.save(png_filename).unwrap();
 

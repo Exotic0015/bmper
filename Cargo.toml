@@ -3,14 +3,14 @@ cargo-features = ["strip"]
 name = "bmper"
 version = "1.0.1"
 authors = ["Exotic"]
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rand = "0.8.3"
-image = "0.23.13"
-quit = "1.1.2"
+rand = "0.8.4"
+image = "0.23.14"
+quit = "1.1.4"
 
 [[bin]]
 name = "bmpr_encoder"

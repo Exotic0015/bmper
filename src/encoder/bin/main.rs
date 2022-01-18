@@ -8,14 +8,10 @@ fn main() {
     let timer: Instant = Instant::now();
 
     // Initialize variables.
-    let mut raw_file: File;
     let mut buffer: Vec<u8> = Vec::new();
-    let buffer_length: usize;
     let size: u32;
     let height: usize;
-    let rname: String;
 
-    let mut array: Vec<Vec<u8>>;
     let mut array_x: usize = 0;
     let mut array_y: usize = 0;
 
@@ -33,16 +29,16 @@ fn main() {
     let raw_file_path: &Path = Path::new(&args[1]);
 
     // Check if the file exists, if it does assign it to a variable.
-    if raw_file_path.exists() {
-        raw_file = File::open(raw_file_path).unwrap();
+    let mut raw_file: File = if raw_file_path.exists() {
+        File::open(raw_file_path).unwrap()
     } else {
         eprintln!("Target file doesn't exist!");
         quit::with_code(4);
-    }
+    };
 
     // Fill the buffer with the raw file's buffer.
     let _ = raw_file.read_to_end(&mut buffer).unwrap();
-    buffer_length = buffer.len();
+    let buffer_length: usize = buffer.len();
 
     // Calculate size and height.
     if buffer_length < 4 {
@@ -62,7 +58,7 @@ fn main() {
     let mut image = image::RgbImage::new(size, size);
 
     // Calculate the pixel array.
-    array = vec![vec![0; 3]; height];
+    let mut array: Vec<Vec<u8>> = vec![vec![0; 3]; height];
 
     for character in buffer {
         array[array_y][array_x] = character;
@@ -90,7 +86,7 @@ fn main() {
     }
 
     // Generate a random filename for newly generated images.
-    rname = rand::thread_rng()
+    let rname: String = rand::thread_rng()
         .sample_iter(&Alphanumeric)
         .take(7)
         .map(char::from)
@@ -110,5 +106,5 @@ fn main() {
     );
 
     // Print execution time.
-    println!("Done in {}{}", timer.elapsed().as_millis(), "ms");
+    println!("Done in {}ms", timer.elapsed().as_millis());
 }

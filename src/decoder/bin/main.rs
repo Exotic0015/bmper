@@ -13,16 +13,11 @@ fn main() {
     let timer: Instant = Instant::now();
 
     // Initialize variables.
-    let raw_file_location: &String;
-    let raw_file_path: &Path;
-    let new_file_filename: String;
-    let new_file_path: &Path;
-    let image: DynamicImage;
-
     let mut buffer: Vec<u8> = Vec::new();
 
     // Collect args for later use.
     let args: Vec<String> = args().collect::<Vec<String>>();
+    let raw_file_location: &String = &args[1];
 
     if args.len() == 1 {
         eprintln!("Target file location not provided!");
@@ -30,8 +25,7 @@ fn main() {
     }
 
     // Create the raw file path from args.
-    raw_file_location = &args[1];
-    raw_file_path = Path::new(&raw_file_location);
+    let raw_file_path = Path::new(&raw_file_location);
 
     if !raw_file_path.exists() {
         eprintln!("Target file doesn't exist!");
@@ -39,11 +33,11 @@ fn main() {
     }
 
     // Assign the image variable
-    image = image::open(raw_file_location).unwrap();
+    let image: DynamicImage = image::open(raw_file_location).unwrap();
 
     // Generate the new file's filename and path.
-    new_file_filename = raw_file_path.to_str().unwrap().to_owned() + ".txt";
-    new_file_path = Path::new(&new_file_filename);
+    let new_file_filename: String = raw_file_path.to_str().unwrap().to_owned() + ".txt";
+    let new_file_path: &Path = Path::new(&new_file_filename);
 
     // Create the new file.
     let mut new_file: File = OpenOptions::new()
@@ -71,5 +65,5 @@ fn main() {
         "Saved output as {}",
         &new_file_path.file_name().unwrap().to_str().unwrap()
     );
-    println!("Done in {}{}", timer.elapsed().as_millis(), "ms");
+    println!("Done in {}ms", timer.elapsed().as_millis());
 }

@@ -1,5 +1,5 @@
 # bmper
-A program that can convert theoretically any file to an image written in Rust
+A program that can convert theoretically any file to an image
 
 This program can convert any<sup>not confirmed, breakage may occur</sup> file into an image and back.
 

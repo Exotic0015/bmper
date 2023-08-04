@@ -5,6 +5,7 @@ use std::{
     path::Path,
     time::Instant,
 };
+use std::process::exit;
 
 use image::DynamicImage;
 
@@ -21,7 +22,7 @@ fn main() {
 
     if args.len() == 1 {
         eprintln!("Target file location not provided!");
-        quit::with_code(3);
+        exit(0);
     }
 
     // Create the raw file path from args.
@@ -29,7 +30,7 @@ fn main() {
 
     if !raw_file_path.exists() {
         eprintln!("Target file doesn't exist!");
-        quit::with_code(4);
+        exit(0);
     }
 
     // Assign the image variable

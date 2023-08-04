@@ -1,4 +1,5 @@
 use std::{env::args, fs::File, io::Read, path::Path, time::Instant};
+use std::process::exit;
 
 use image::Rgb;
 use rand::{distributions::Alphanumeric, Rng};
@@ -22,7 +23,7 @@ fn main() {
     let args: Vec<String> = args().collect::<Vec<String>>();
     if args.len() == 1 {
         eprintln!("Target file location not provided!");
-        quit::with_code(3);
+        exit(0);
     }
 
     // Create the raw file path from args.
@@ -33,7 +34,7 @@ fn main() {
         File::open(raw_file_path).unwrap()
     } else {
         eprintln!("Target file doesn't exist!");
-        quit::with_code(4);
+        exit(0);
     };
 
     // Fill the buffer with the raw file's buffer.
@@ -86,7 +87,7 @@ fn main() {
     }
 
     // Generate a random filename for newly generated images.
-    let rname: String = rand::thread_rng()
+    let random_name: String = rand::thread_rng()
         .sample_iter(&Alphanumeric)
         .take(7)
         .map(char::from)
@@ -95,14 +96,14 @@ fn main() {
 
     // Save the image.
     let png_filename =
-        format! {"{}.{}.png", rname, raw_file_path.extension().unwrap().to_str().unwrap()};
+        format! {"{}.{}.png", random_name, raw_file_path.extension().unwrap().to_str().unwrap()};
 
     image.save(png_filename).unwrap();
 
     // Print stats.
     println!(
         "Size: {}x{}\nCharacter count: {}\nSaved as {}.png",
-        size, size, buffer_length, rname
+        size, size, buffer_length, random_name
     );
 
     // Print execution time.

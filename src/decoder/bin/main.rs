@@ -5,11 +5,10 @@ use std::{
     path::Path,
     time::Instant,
 };
-use std::process::exit;
 
 use image::DynamicImage;
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize a stopwatch for timing purposes.
     let timer: Instant = Instant::now();
 
@@ -18,23 +17,30 @@ fn main() {
 
     // Collect args for later use.
     let args: Vec<String> = args().collect::<Vec<String>>();
-    let raw_file_location: &String = &args[1];
 
     if args.len() == 1 {
-        eprintln!("Target file location not provided!");
-        exit(0);
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            "Target file location not provided!",
+        )
+        .into());
     }
 
+    //let raw_file_location: &String = &args[1];
+
     // Create the raw file path from args.
-    let raw_file_path = Path::new(&raw_file_location);
+    let raw_file_path = Path::new(&args[1]);
 
     if !raw_file_path.exists() {
-        eprintln!("Target file doesn't exist!");
-        exit(0);
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            "Target file doesn't exist!",
+        )
+        .into());
     }
 
     // Assign the image variable
-    let image: DynamicImage = image::open(raw_file_location).unwrap();
+    let image: DynamicImage = image::open(raw_file_path)?;
 
     // Generate the new file's filename and path.
     let new_file_filename: String = raw_file_path.to_str().unwrap().to_owned() + ".txt";
@@ -46,8 +52,7 @@ fn main() {
         .write(true)
         .append(true)
         .create(true)
-        .open(&new_file_filename)
-        .unwrap();
+        .open(&new_file_filename)?;
 
     // Decode the image.
     for pixel in image.to_rgba8().pixels() {
@@ -57,7 +62,7 @@ fn main() {
         buffer.push(pixel[3]);
     }
 
-    new_file.write_all(&buffer).unwrap();
+    new_file.write_all(&buffer)?;
 
     // Print stats
     println!(
@@ -65,4 +70,6 @@ fn main() {
         &new_file_path.file_name().unwrap().to_str().unwrap()
     );
     println!("Done in {}ms", timer.elapsed().as_millis());
+
+    Ok(())
 }

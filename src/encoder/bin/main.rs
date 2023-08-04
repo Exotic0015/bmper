@@ -1,7 +1,7 @@
 use std::{env::args, fs::File, io::Read, path::Path, time::Instant};
 use std::process::exit;
 
-use image::Rgb;
+use image::Rgba;
 use rand::{distributions::Alphanumeric, Rng};
 
 fn main() {
@@ -42,29 +42,29 @@ fn main() {
     let buffer_length: usize = buffer.len();
 
     // Calculate size and height.
-    if buffer_length < 4 {
+    if buffer_length <= 4 {
         size = 1;
         height = 1;
     } else {
-        size = ((((buffer_length / 3) as f64).sqrt() as u32 + 1) as f64).ceil() as u32;
+        size = ((((buffer_length / 4) as f64).sqrt() as u32 + 1) as f64).ceil() as u32;
 
-        if buffer_length % 3 != 0 {
-            height = ((buffer_length / 3 + 1) as f64).ceil() as usize;
+        if buffer_length % 4 != 0 {
+            height = ((buffer_length / 4 + 1) as f64).ceil() as usize;
         } else {
-            height = ((buffer_length / 3) as f64).ceil() as usize;
+            height = ((buffer_length / 4) as f64).ceil() as usize;
         }
     }
 
     // Assign the image variable.
-    let mut image = image::RgbImage::new(size, size);
+    let mut image = image::RgbaImage::new(size, size);
 
     // Calculate the pixel array.
-    let mut array: Vec<Vec<u8>> = vec![vec![0; 3]; height];
+    let mut array: Vec<Vec<u8>> = vec![vec![0; 4]; height];
 
     for character in buffer {
         array[array_y][array_x] = character;
 
-        if array_x == 2 {
+        if array_x == 3 {
             array_x = 0;
             array_y += 1;
         } else {
@@ -74,7 +74,7 @@ fn main() {
 
     // Draw pixels on the image.
     for pixel in array {
-        image.put_pixel(image_x, image_y, Rgb([pixel[0], pixel[1], pixel[2]]));
+        image.put_pixel(image_x, image_y, Rgba([pixel[0], pixel[1], pixel[2], pixel[3]]) );
 
         if image_x == size - 1 {
             image_x = 0;

@@ -50,13 +50,11 @@ fn main() {
         .unwrap();
 
     // Decode the image.
-    for pixel in image.to_rgb8().pixels() {
-        //let _ = new_file.write_all(&[pixel[0]]);
-        //let _ = new_file.write_all(&[pixel[1]]);
-        //let _ = new_file.write_all(&[pixel[2]]);
+    for pixel in image.to_rgba8().pixels() {
         buffer.push(pixel[0]);
         buffer.push(pixel[1]);
         buffer.push(pixel[2]);
+        buffer.push(pixel[3]);
     }
 
     new_file.write_all(&buffer).unwrap();

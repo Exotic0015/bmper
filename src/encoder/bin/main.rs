@@ -1,3 +1,4 @@
+use std::io::BufReader;
 use std::{env::args, fs::File, io::Read, path::Path, time::Instant};
 
 use image::Rgba;
@@ -32,18 +33,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let raw_file_path: &Path = Path::new(&args[1]);
 
     // Check if the file exists, if it does assign it to a variable.
-    let mut raw_file: File = if raw_file_path.exists() {
-        File::open(raw_file_path)?
-    } else {
+    if !raw_file_path.exists() {
         return Err(std::io::Error::new(
             std::io::ErrorKind::NotFound,
             "Target file doesn't exist!",
         )
         .into());
-    };
+    }
 
     // Fill the buffer with the raw file's buffer.
+    let mut raw_file = BufReader::new(File::open(raw_file_path)?);
     let _ = raw_file.read_to_end(&mut buffer)?;
+
     let buffer_length: usize = buffer.len();
 
     // Calculate size and height.
